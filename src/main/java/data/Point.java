@@ -8,20 +8,25 @@ import java.io.Serializable;
 @Table(name = "POINTS")
 public class Point implements Serializable {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "ID")
     private int id;
+
     @Column(name = "X")
     private Double x;
+
     @Column(name = "Y")
     private Double y;
+
     @Column(name = "R")
     private Double r;
-    private boolean check; //1 - попал, 0 - промах
+
+    @Column(name = "RESULT")
+    private int check; //1 - попал, 0 - промах
 
     public Point(){}
 
-    public Point(double x, double y, double r, boolean check){
+    public Point(double x, double y, double r, int check){
         this.x = x;
         this.y = y;
         this.r = r;
@@ -48,11 +53,11 @@ public class Point implements Serializable {
         return r;
     }
 
-    public boolean isCheck() {
+    public int isCheck() {
         return check;
     }
 
-    public void setCheck(boolean check) {
+    public void setCheck(int     check) {
         this.check = check;
     }
 }
