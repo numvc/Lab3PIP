@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+<script src="scripts.js" type="text/javascript"/>
+
+
+<h:head>
+    <title>
+        Lab3
+    </title>
+    <link rel="stylesheet" type="text/css" href="style.css"/>
+</h:head>
+<h:body>
+    <div id="container">
+        <div id="header">
+            <h2>
+                <br/>
+                Проверь точку здесь!
+            </h2>
+        </div>
+        <div id="mainPart">
+            <div id="forCanvas">
+                <p>График</p>
+                <canvas id="image_1" width="270px" height="270px" style="border:solid 2px black"/>
+                <script type="text/javascript">drawGraph()</script>
+            </div>
+
+            <div id="choice">
+                <h:form id="main-form">
+
+                    <h:outputLabel value="Выберите Х: "/>
+                    <p:spinner id="x" value="#{Points.x}" required="true"
+                               validatorMessage="Число вне ОДЗ" placeholder="Число от -3 до 3"
+                               requiredMessage="Заполните поле" converterMessage="Было введено не число"
+                               title="Используйте целые числа от -3 до 3"
+                               style="width: 270px; height: 47px">
+                        <f:validateDoubleRange minimum="-3.0" maximum="3.0"/>
+                        <f:ajax event="change" render="errX butt test"/>
+                    </p:spinner>
+                    <h:message for="x" id="errX" style="color:red;"/>
+                    <br/>
+                    <br/>
+                    <h:outputLabel value="Выберите Y: "/>
+                    <p:inputText required="true" style="font-size:23px; width: 270px; height: 35px"
+                                 id="y" validatorMessage="Число вне ОДЗ"
+                                 requiredMessage="Заполните поле" converterMessage="Введено не число"
+                                 title="Используйте точку, целые и дробные числа от -3 до 3"
+                                 value="#{Points.y}" placeholder="Число от -3 до 3">
+                        <f:validateDoubleRange minimum="-3.0" maximum="3.0"/>
+                        <f:ajax event="change" render="errY butt test"/>
+                    </p:inputText>
+                    <h:message for="y" id="errY" style="color:red;"/>
+                    <br/>
+                    <br/>
+
+                    <h:outputText value="Выберите R:   "/>
+
+                    <p:selectBooleanCheckbox value="#{Points.r1}" styleClass="checkbox" name="r" id="r1"
+                                             itemLabel="1">
+                        <f:ajax render="r2 r3 r4 r5 butt errR" listener="#{Points.activeR1}"/>
+                    </p:selectBooleanCheckbox>
+
+                    <p:selectBooleanCheckbox itemLabel="1.5" value="#{Points.r2}" styleClass="checkbox"
+                                             name="r" id="r2">
+                        <f:ajax render="r1 r3 r4 r5 butt errR" listener="#{Points.activeR2}"/>
+                    </p:selectBooleanCheckbox>
+
+                    <p:selectBooleanCheckbox itemLabel="2" value="#{Points.r3}" styleClass="checkbox"
+                                             name="r" id="r3">
+                        <f:ajax render="r2 r1 r4 r5 butt errR" listener="#{Points.activeR3}"/>
+                    </p:selectBooleanCheckbox>
+
+                    <p:selectBooleanCheckbox itemLabel="2.5" value="#{Points.r4}" styleClass="checkbox"
+                                             name="r" id="r4">
+                        <f:ajax render="r2 r3 r1 r5 butt errR" listener="#{Points.activeR4}"/>
+                    </p:selectBooleanCheckbox>
+
+                    <p:selectBooleanCheckbox itemLabel="3" value="#{Points.r5}" styleClass="checkbox"
+                                             name="r" id="r5">
+                        <f:ajax render="r2 r3 r4 r1 butt errR" listener="#{Points.activeR5}"/>
+                    </p:selectBooleanCheckbox>
+                    <h:outputLabel value="#{Points.validateR}" id="errR" style="color: red;"/>
+                    <br/>
+                    <br/>
+                    <input id="button" class="button" type="button"
+                           value=" Назад " onClick='location.href="index.xhtml"'/>
+
+                    <p:commandButton id="butt" styleClass="button"
+                                     value="Проверить" disabled="#{!Points.ready}" action="#{Points.check}"/>
+
+                </h:form>
+            </div>
+            <h:outputLabel value="#{Points.x} + #{Points.y} + #{Points.r}" id="test"/>
+            <div id="error">
+
+            </div>
+        </div>
+    </div>
+</h:body>
+</html>
+
