@@ -37,7 +37,8 @@
           <element id="library" level="project" name="Maven: org.jboss:jandex:2.0.5.Final" />
           <element id="library" level="project" name="Maven: org.jvnet.staxex:stax-ex:1.8" />
           <element id="library" level="project" name="Maven: org.slf4j:slf4j-api:1.5.8" />
-          <element id="file-copy" path="$PROJECT_DIR$/../../../../ojdbc6-11.2.0.2.0.jar" />
+          <element id="library" level="project" name="ojdbc6-11.2.0.2.0" />
+          <element id="library" level="project" name="Maven: com.google.code.gson:gson:2.8.6" />
         </element>
       </element>
     </root>

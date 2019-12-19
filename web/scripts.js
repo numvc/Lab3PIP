@@ -1,6 +1,12 @@
-function drawGraph() {
-    var image_1 = document.getElementById('image_1');
+function drawGraph(r, jsonPoints) {
+
+    if (r !== "R") {
+        r = findCheckbox();
+    }
+
+    var image_1 = document.getElementById('canvas');
     var im = image_1.getContext('2d');
+    im.clearRect(0, 0, 270, 270);
 
     im.fillStyle = 'DodgerBlue';
     im.fillRect(55, 135, 80, 40);
@@ -70,131 +76,123 @@ function drawGraph() {
     im.lineTo(253, 142);
     im.stroke();
 
-
     im.fillStyle = 'BLACK';
     im.font = "13px Century Gothic";
     im.fillText("y", 145, 11);
     im.fillText("x", 255, 125);
 
     im.font = "15px Century Gothic";
-    im.fillText("R/2", 140, 99); //подписи по У
-    im.fillText("R", 140, 60);
-    im.fillText("-R/2", 140, 180);
-    im.fillText("-R", 140, 220);
+    im.fillText(r + "/2", 140, 99); //подписи по У
+    im.fillText(r, 140, 60);
+    im.fillText("-" + r + "/2", 140, 180);
+    im.fillText("-" + r, 140, 220);
 
-    im.fillText("-R/2", 81, 128); //подписи по Х
-    im.fillText("-R", 47, 128);
-    im.fillText("R/2", 165, 128);
-    im.fillText("R", 210, 128);
-}
+    im.fillText("-" + r + "/2", 81, 128); //подписи по Х
+    im.fillText("-" + r, 47, 128);
+    im.fillText(r + "/2", 165, 128);
+    im.fillText(r, 210, 128);
 
+    im.closePath();
 
-function validate() {
-    document.getElementById("error").innerHTML = "  ";
-    var rboxs = document.getElementsByClassName("checkbox2");
-    var fr = 0;
+    if (r !== 'R') {
+        for (let i = 0; jsonPoints.length > i; i++) {
+            let currP = jsonPoints[i];
+            drawAfterChanging(currP.x, currP.y, r);
 
-    var y = document.getElementById("y").value;
-    var yReg = /^(?!-0$)-?(3$|([0-2](\.\d+)?))$/;
-
-    if (yReg.test(y) == false) {
-        document.getElementById("error").innerHTML = "Введенное значение Y некорректно!";
-        return false;
-    }
-
-    for (var j = 0; rboxs.length > j; j++) if (rboxs[j].checked) {
-        fr = fr + 1;
-    }
-    if (fr == 0) {
-        document.getElementById("error").innerHTML = "Выберите радиус!";
-        return false;
-    }
-    return true;
-}
-
-function activeBut() {
-    document.getElementById("main-form:butt").disabled = false;
-}
-
-function checkPointInArea(x, y, r) {
-    // x = document.getElementById("x").value;
-    alert(x);
-    // y = document.getElementById("y").value;
-    alert(y);
-    // r = document.getElementById("r").value;
-    alert(r);
-
-    for (var rCurr in r) {
-        if ((x >= 0) && (y >= 0) && (x * x + y * y <= rCurr * rCurr / 4)) { //the first part
-            drawPoint(x, y, r, 1);
-        } else if ((x <= 0) && (y <= 0) && (-y <= rCurr / 2) && (-x <= rCurr)) { //the third part
-            drawPoint(x, y, r, 1);
-        } else if ((x >= 0) && (y <= 0) && (y >= 2 * x - rCurr)) { //the fourth
-            drawPoint(x, y, r, 1);
-        } else {
-            drawPoint(x, y, r, 0);
         }
     }
 }
 
-function drawPoint(x, y, r, isPointInArea) {
-    var image_1 = document.getElementById('image_1');
-    var im = image_1.getContext('2d');
-    if (isPointInArea == 1) {
+
+function drawAfterChanging(x, y, r) {
+    let im = document.getElementById("canvas").getContext("2d");
+
+    if ((x >= 0) && (y >= 0) && (x * x + y * y <= r * r / 4)) { //the first part
+        im.fillStyle = "#B0FFC3";
+    } else if ((x <= 0) && (y <= 0) && (-y <= r / 2) && (-x <= r)) { //the third part
+        im.fillStyle = "#B0FFC3";
+    } else if ((x >= 0) && (y <= 0) && (y >= 2 * x - r)) { //the fourth
         im.fillStyle = "#B0FFC3";
     } else {
         im.fillStyle = "red";
     }
 
+    x = x * 80 / r + 135;
+    y = 135 - y * 80 / r;
+
     im.beginPath();
-    im.moveTo(x * 80 / r + 135, 135 - y * 80 / r);
-    im.fillRect(x * 80 / r + 135, 135 - y * 80 / r, 2.7, 2.7);
+    im.moveTo(x, y);
+    im.fillRect(x, y, 2.7, 2.7);
     im.closePath();
+
 }
 
-// TO FIX
-function onChangeRadius(id) {
-    alert("Передалось в функцию:" + id);
-    var r1 = document.getElementById("main-form:r1_input");
-    var r2 = document.getElementById("main-form:r2_input");
-    var r3 = document.getElementById("main-form:r3_input");
-    var r4 = document.getElementById("main-form:r4_input");
-    var r5 = document.getElementById("main-form:r5_input");
+function findCheckbox() {
+    if (document.getElementById("main-form:r1_input").checked == true) {
+        return '1';
+    } else
 
-    if (id ==r1.id){
-        alert('1');
-        r2.checked = false;
-        r3.checked = false;
-        r4.checked = false;
-        r5.checked = false;
-    }
+    if (document.getElementById("main-form:r2_input").checked == true) {
+        return '1.5';
+    } else
 
-    if (id ==r2.id){
-        r1.checked = false;
-        r3.checked = false;
-        r4.checked = false;
-        r5.checked = false;
-    }
+    if (document.getElementById("main-form:r3_input").checked == true) {
+        return '2';
+    } else
 
-    if (id ==r3.id){
-        r2.checked = false;
-        r1.checked = false;
-        r4.checked = false;
-        r5.checked = false;
-    }
+    if (document.getElementById("main-form:r4_input").checked == true) {
+        return '2.5';
+    } else
 
-    if (id ==r4.id){
-        r2.checked = false;
-        r3.checked = false;
-        r1.checked = false;
-        r5.checked = false;
-    }
+    if (document.getElementById("main-form:r5_input").checked == true) {
+        return '3';
+    } else return 'R';
 
-    if (id ==r5.id){
-        r2.checked = false;
-        r3.checked = false;
-        r4.checked = false;
-        r1.checked = false;
-    }
+
 }
+
+function drawPoint(event) {  //при нажатии обрабатывает точку с  запросом + добавляет в таблицу
+    let r = document.getElementById("canvas_form:rCanvas").value;
+
+    if ((r === undefined) || (r == null) || (r == "")) {
+        alert("Выберите радиус для графика!");
+    } else {
+        let clRect = document.getElementById('canvas').getBoundingClientRect();
+        let im = document.getElementById("canvas").getContext("2d");
+        let canvas = document.getElementById("canvas");
+
+        let offset = (clRect.width - canvas.width) / 2 + 1;
+
+        let x = event.clientX - clRect.left - offset;
+        let y = event.clientY - clRect.top - offset;
+
+        x = (x - 135) * r / 80;
+        y = (135 - y) * r / 80;
+
+
+        document.getElementById("canvas_form:xCanvas").value = x.toFixed(3);
+        document.getElementById("canvas_form:yCanvas").value = y.toFixed(3);
+
+
+        if ((x >= 0) && (y >= 0) && (x * x + y * y <= r * r / 4)) { //the first part
+            im.fillStyle = "#B0FFC3";
+        } else if ((x <= 0) && (y <= 0) && (-y <= r / 2) && (-x <= r)) { //the third part
+            im.fillStyle = "#B0FFC3";
+        } else if ((x >= 0) && (y <= 0) && (y >= 2 * x - r)) { //the fourth
+            im.fillStyle = "#B0FFC3";
+        } else {
+            im.fillStyle = "red";
+        }
+
+        x = x * 80 / r + 135;
+        y = 135 - y * 80 / r;
+
+        im.beginPath();
+        im.moveTo(x, y);
+        im.fillRect(x, y, 2.7, 2.7);
+        im.closePath();
+    }
+
+}
+
 

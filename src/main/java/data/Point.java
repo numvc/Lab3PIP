@@ -8,7 +8,6 @@ import java.io.Serializable;
 @Table(name = "POINTS")
 public class Point implements Serializable {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "ID")
     private int id;
 
@@ -53,11 +52,11 @@ public class Point implements Serializable {
         return r;
     }
 
-    public int isCheck() {
+    public int getCheck() {
         return check;
     }
 
-    public void setCheck(int     check) {
+    public void setCheck(int check) {
         this.check = check;
     }
 }

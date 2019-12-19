@@ -24,12 +24,24 @@
             </h2>
         </div>
         <div id="mainPart">
-            <div id="forCanvas">
-                <p>График</p>
-                <canvas id="image_1" width="270px" height="270px" style="border:solid 2px black"/>
-                <script type="text/javascript">drawGraph()</script>
-            </div>
 
+            <p>График</p>
+
+            <h:form id="canvas_form">
+                <canvas id="canvas" width="270px" height="270px" style="border:solid 2px black"
+                        onclick="drawPoint(event); addPointFromCanvas();">
+                    <f:ajax event="click" render="xCanvas yCanvas"/>
+                    <h:inputText id="xCanvas" value="#{Points.xCanvas}" style="display: none;"/>
+                    <h:inputText id="yCanvas" value="#{Points.yCanvas}" style="display: none;"/>
+                    <h:inputText id="rCanvas" value="#{Points.rCanvas}" style="display: none;"/>
+                </canvas>
+
+                <p:remoteCommand name="addPointFromCanvas" action="#{Points.checkAndAddFromGraph}" update="table"/>
+            </h:form>
+
+
+            <script type="text/javascript">drawGraph("R", "no")</script>
+            <br/>
             <div id="choice">
                 <h:form id="main-form">
 
@@ -38,21 +50,22 @@
                                validatorMessage="Число вне ОДЗ" placeholder="Число от -3 до 3"
                                requiredMessage="Заполните поле" converterMessage="Было введено не число"
                                title="Используйте целые числа от -3 до 3"
-                               style="width: 270px; height: 47px">
+                               style="width: 270px; height: 38px">
                         <f:validateDoubleRange minimum="-3.0" maximum="3.0"/>
-                        <f:ajax event="change" render="errX butt test"/>
+                        <f:ajax event="keyup" render="errX butt xCanvas"/>
+                        <f:ajax event="change" render="errX butt xCanvas"/>
                     </p:spinner>
                     <h:message for="x" id="errX" style="color:red;"/>
                     <br/>
                     <br/>
                     <h:outputLabel value="Выберите Y: "/>
-                    <p:inputText required="true" style="font-size:23px; width: 270px; height: 35px"
+                    <p:inputText required="true" style="font-size:23px; width: 267px; height: 30px"
                                  id="y" validatorMessage="Число вне ОДЗ"
                                  requiredMessage="Заполните поле" converterMessage="Введено не число"
                                  title="Используйте точку, целые и дробные числа от -3 до 3"
                                  value="#{Points.y}" placeholder="Число от -3 до 3">
                         <f:validateDoubleRange minimum="-3.0" maximum="3.0"/>
-                        <f:ajax event="change" render="errY butt test"/>
+                        <f:ajax event="keyup" render="errY butt yCanvas"/>
                     </p:inputText>
                     <h:message for="y" id="errY" style="color:red;"/>
                     <br/>
@@ -61,28 +74,29 @@
                     <h:outputText value="Выберите R:   "/>
 
                     <p:selectBooleanCheckbox value="#{Points.r1}" styleClass="checkbox" name="r" id="r1"
-                                             itemLabel="1">
-                        <f:ajax render="r2 r3 r4 r5 butt errR" listener="#{Points.activeR1}"/>
+                                             itemLabel="1" valueChangeListener="#{Points.changeR1}">
+                        <p:ajax event="change" oncomplete="drawGraph('1', #{Points.pointsJson})" update="r2 r3 r4 r5 butt errR canvas_form:rCanvas"/>
+
                     </p:selectBooleanCheckbox>
 
                     <p:selectBooleanCheckbox itemLabel="1.5" value="#{Points.r2}" styleClass="checkbox"
-                                             name="r" id="r2">
-                        <f:ajax render="r1 r3 r4 r5 butt errR" listener="#{Points.activeR2}"/>
+                                             name="r" id="r2" valueChangeListener="#{Points.changeR2}">
+                        <p:ajax event="change" oncomplete="drawGraph('1', #{Points.pointsJson})" update="r1 r3 r4 r5 butt errR canvas_form:rCanvas"/>
                     </p:selectBooleanCheckbox>
 
                     <p:selectBooleanCheckbox itemLabel="2" value="#{Points.r3}" styleClass="checkbox"
-                                             name="r" id="r3">
-                        <f:ajax render="r2 r1 r4 r5 butt errR" listener="#{Points.activeR3}"/>
+                                             name="r" id="r3" valueChangeListener="#{Points.changeR3}">
+                        <p:ajax event="change" oncomplete="drawGraph('1', #{Points.pointsJson})" update="r2 r1 r4 r5 butt errR canvas_form:rCanvas"/>
                     </p:selectBooleanCheckbox>
 
                     <p:selectBooleanCheckbox itemLabel="2.5" value="#{Points.r4}" styleClass="checkbox"
-                                             name="r" id="r4">
-                        <f:ajax render="r2 r3 r1 r5 butt errR" listener="#{Points.activeR4}"/>
+                                             name="r" id="r4" valueChangeListener="#{Points.changeR4}">
+                        <p:ajax event="change" oncomplete="drawGraph('1', #{Points.pointsJson})" update="r2 r3 r1 r5 butt errR canvas_form:rCanvas"/>
                     </p:selectBooleanCheckbox>
 
                     <p:selectBooleanCheckbox itemLabel="3" value="#{Points.r5}" styleClass="checkbox"
-                                             name="r" id="r5">
-                        <f:ajax render="r2 r3 r4 r1 butt errR" listener="#{Points.activeR5}"/>
+                                             name="r" id="r5" valueChangeListener="#{Points.changeR5}">
+                        <p:ajax event="change" oncomplete="drawGraph('1', #{Points.pointsJson})" update="r2 r3 r4 r1 butt errR canvas_form:rCanvas"/>
                     </p:selectBooleanCheckbox>
                     <h:outputLabel value="#{Points.validateR}" id="errR" style="color: red;"/>
                     <br/>
@@ -91,16 +105,43 @@
                            value=" Назад " onClick='location.href="index.xhtml"'/>
 
                     <p:commandButton id="butt" styleClass="button"
-                                     value="Проверить" disabled="#{!Points.ready}" action="#{Points.check}"/>
-
+                                     value="Проверить" disabled="#{!Points.ready}"
+                                     action="#{Points.checkAndAddFromForm}">
+                        <f:ajax execute="@form" render="table"/>
+                    </p:commandButton>
                 </h:form>
             </div>
-            <h:outputLabel value="#{Points.x} + #{Points.y} + #{Points.r}" id="test"/>
-            <div id="error">
+            <br/>
+            <p:dataTable value="#{Points.points}" var="p" id="table" styleClass="table">
 
-            </div>
+                <p:column headerText="X">
+
+                    <h:outputText value="#{p.x}"/>
+
+                </p:column>
+
+                <p:column headerText="Y">
+
+                    <h:outputText value="#{p.y}"/>
+
+                </p:column>
+
+                <p:column headerText="R">
+
+                    <h:outputText value="#{p.r}"/>
+
+                </p:column>
+
+                <p:column headerText="RESULT">
+
+                    <h:outputText value="#{p.check}"/>
+
+                </p:column>
+
+            </p:dataTable>
         </div>
     </div>
+
 </h:body>
 </html>
 
