@@ -4,8 +4,12 @@ import data.Point;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.hibernate.query.Query;
 
+import javax.jws.soap.SOAPBinding;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class Handler {
     private SessionFactory session = null;
@@ -32,14 +36,13 @@ public class Handler {
         }
     }
 
-    public ArrayList<Point> getTableContext() {
-        ArrayList<Point> Points = null;
-
+    public List<Point> getTableContext(String username) {
+        List<Point> Points = null;
         try {
-            Points = (ArrayList<Point>) session.openSession().createQuery("FROM Point").list();
             Session ses = session.openSession();
-            Transaction tx = ses.beginTransaction();
-            tx.commit();
+            Query query = ses.createQuery("FROM Point WHERE user = :username");
+            query.setParameter("username", username);
+            Points = query.list();
             ses.close();
         } catch (Exception ex) {
             ex.printStackTrace();

@@ -23,13 +23,17 @@ public class Point implements Serializable {
     @Column(name = "RESULT")
     private int check; //1 - попал, 0 - промах
 
+    @Column(name = "USER_NAME")
+    private String user;
+
     public Point(){}
 
-    public Point(double x, double y, double r, int check){
+    public Point(double x, double y, double r, int check, String user){
         this.x = x;
         this.y = y;
         this.r = r;
         this.check = check;
+        this.user = user;
     }
 
     public Double getX() {
@@ -58,5 +62,13 @@ public class Point implements Serializable {
 
     public void setCheck(int check) {
         this.check = check;
+    }
+
+    public String getUser() {
+        return user;
+    }
+
+    public void setUser(String user) {
+        this.user = user;
     }
 }

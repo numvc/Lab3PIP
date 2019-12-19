@@ -2,54 +2,74 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-   <title>
-      Lab1
-   </title>
-   <link rel="stylesheet" type="text/css" href="style.css"/>
-</head>
-<body onload="startTime()">
-<div id="container">
-   <div id="header">
-      <h2>
-         Щелыкалов Виктор Анатольевич <br/>
-         P3214, вар 64672
-      </h2>
-   </div>
-
-   <div id="mainPart">
-      <p id="txt"> </p>
-       <input id="button" class="button" type="button" value="Next"
-              onclick='location.href="main.xhtml"'/>
-   </div>
-</div>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+<h:head>
+    <title>
+        Lab1
+    </title>
+    <link rel="stylesheet" type="text/css" href="style.css"/>
+</h:head>
 
 
-<script type="text/javascript">
-    function startTime() {
-        var tm = new Date();
-        var h = tm.getHours();
-        var m = tm.getMinutes();
-        var s = tm.getSeconds();
-        var day = tm.getDate();
-        var month = tm.getMonth()+1;
-        var year = tm.getFullYear();
-        m = checkTime(m);
-        s = checkTime(s);
-        document.getElementById('txt').innerHTML = "Date: " + " " + day + "." + month + "."  + year + "&lt;br \/>" +
-            "Time: " + h + ":" + m + ":" + s;
-        t = setTimeout('startTime()', 500);
-    }
+<h:body onload="startTime()">
+    <div id="container">
+        <div id="header">
+            <h2>
+                Щелыкалов Виктор Анатольевич <br/>
+                P3214, вар 64672
+            </h2>
+        </div>
 
-    function checkTime(i) {
-        if (10 > i) {
-            i = "0" + i;
+        <div id="mainPart">
+            <p id="txt"></p>
+
+            <h:form>
+                <p:inputText id="name" value="#{UserBean.userName}" placeholder="Введите имя пользователя"
+                             requiredMessage="Заполните поле" style="width: 200px; height: 30px"
+                             required="true" validatorMessage="Введите более двух символов">
+
+                    <f:validateLength minimum="4"/>
+                    <f:ajax event="change" render="namevalid submit"/>
+                </p:inputText>
+                <h:message for="name" id="namevalid" style="color:red;"/>
+
+                <br/>
+                <br/>
+                <p:commandButton id="submit" styleClass="button" action="#{UserBean.changePage}"
+                                 value="Далее" disabled="#{UserBean.ready}"/>
+
+            </h:form>
+        </div>
+    </div>
+
+
+    <script type="text/javascript">
+        function startTime() {
+            var tm = new Date();
+            var h = tm.getHours();
+            var m = tm.getMinutes();
+            var s = tm.getSeconds();
+            var day = tm.getDate();
+            var month = tm.getMonth() + 1;
+            var year = tm.getFullYear();
+            m = checkTime(m);
+            s = checkTime(s);
+            document.getElementById('txt').innerHTML = "Date: " + " " + day + "." + month + "." + year + "&lt;br \/>" +
+                "Time: " + h + ":" + m + ":" + s;
+            t = setTimeout('startTime()', 500);
         }
-        return i;
-    }
-</script>
-</body>
+
+        function checkTime(i) {
+            if (10 > i) {
+                i = "0" + i;
+            }
+            return i;
+        }
+    </script>
+</h:body>
 </html>
 
 

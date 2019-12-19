@@ -4,8 +4,12 @@ import com.google.gson.Gson;
 import controller.Handler;
 import data.Point;
 
+import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
+import javax.faces.context.FacesContext;
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.List;
 
@@ -26,6 +30,10 @@ public class Points implements Serializable {
     private Double xCanvas;
     private Double yCanvas;
     private Double rCanvas;
+    private String userName;
+
+    @ManagedProperty(value = "#{UserBean}")
+    private UserBean userBean;
 
     private String pointsJson;
 
@@ -40,6 +48,18 @@ public class Points implements Serializable {
         this.x = x;
         this.y = y;
         this.r = r;
+    }
+
+    @PostConstruct
+    public void postConstruct(){
+        try {
+            if(userBean.getUserName()==null || userBean.getUserName().equals("")){
+                FacesContext.getCurrentInstance().getExternalContext().redirect("index.xhtml");
+            }
+        }
+        catch (IOException e){
+            System.err.println(e.getMessage());
+        }
     }
 
     public Double getX() {
@@ -81,11 +101,11 @@ public class Points implements Serializable {
             check = 0;
         }
 
-        Point point = new Point(x, y, r, check);
+        Point point = new Point(x, y, r, check, getUserName());
         handler.addInDb(point);
     }
 
-    public void checkAndAddFromGraph(){
+    public void checkAndAddFromGraph() {
         System.out.println("ПЫТАЮСЬ ДОБАВИТЬ");
         System.out.println(getxCanvas() + " " + getyCanvas());
 
@@ -101,11 +121,8 @@ public class Points implements Serializable {
             check = 0;
         }
 
-        Point point = new Point(getxCanvas(), getyCanvas(), getrCanvas(), check);
+        Point point = new Point(getxCanvas(), getyCanvas(), getrCanvas(), check, getUserName());
         handler.addInDb(point);
-
-
-
     }
 
 
@@ -151,7 +168,7 @@ public class Points implements Serializable {
     }
 
     public void changeR1() {
-        if(getR1() == true) {
+        if (getR1() == true) {
             setR1(false);
             setR(null);
             setrCanvas(null);
@@ -167,7 +184,7 @@ public class Points implements Serializable {
     }
 
     public void changeR2() {
-        if(getR2() == true) {
+        if (getR2() == true) {
             setR2(false);
             setR(null);
             setrCanvas(null);
@@ -183,7 +200,7 @@ public class Points implements Serializable {
     }
 
     public void changeR3() {
-        if(getR3() == true) {
+        if (getR3() == true) {
             setR3(false);
             setR(null);
             setrCanvas(null);
@@ -199,7 +216,7 @@ public class Points implements Serializable {
     }
 
     public void changeR4() {
-        if(getR4() == true) {
+        if (getR4() == true) {
             setR4(false);
             setR(null);
             setrCanvas(null);
@@ -215,7 +232,7 @@ public class Points implements Serializable {
     }
 
     public void changeR5() {
-        if(getR5() == true) {
+        if (getR5() == true) {
             setR5(false);
             setR(null);
             setrCanvas(null);
@@ -243,9 +260,9 @@ public class Points implements Serializable {
 
     public List<Point> getPoints() {
         if (handler == null) handler = new Handler();
-        List<Point> currTableList = handler.getTableContext();
-        if(currTableList != points) {
-            points = handler.getTableContext();
+        List<Point> currTableList = handler.getTableContext(getUserName());
+        if (currTableList != points) {
+            points = handler.getTableContext(getUserName());
         }
         return points;
     }
@@ -286,5 +303,21 @@ public class Points implements Serializable {
 
     public void setPointsJson(String pointsJson) {
         this.pointsJson = pointsJson;
+    }
+
+    public UserBean getUserBean() {
+        return userBean;
+    }
+
+    public void setUserBean(UserBean userBean) {
+        this.userBean = userBean;
+    }
+
+    public String getUserName() {
+        return getUserBean().getUserName();
+    }
+
+    public void setUserName() {
+        this.userName = getUserBean().getUserName();
     }
 }
